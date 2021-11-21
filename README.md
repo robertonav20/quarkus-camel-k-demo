@@ -27,7 +27,7 @@ Launch minikube with :
 
 ```
 minikube start --memory=8192 --cpus=6 \
-  --kubernetes-version=v1.20.0 \
+  --kubernetes-version=v1.22.3 \
   --vm-driver=kvm2 \
   --disk-size=30g \
   --addons registry \
@@ -36,25 +36,43 @@ minikube start --memory=8192 --cpus=6 \
 
 **If minikube has stopped, you must execute again Minikube permission**
 
-# Istio
-```
-kubectl apply --filename https://raw.githubusercontent.com/knative/serving/v0.5.2/third_party/istio-1.0.7/istio-crds.yaml &&
-          curl -L https://raw.githubusercontent.com/knative/serving/v0.5.2/third_party/istio-1.0.7/istio.yaml \
-            | sed 's/LoadBalancer/NodePort/' \
-            | kubectl apply --filename -      
-kubectl label namespace default istio-injection=enabled
-```
 # Knative
 Install knative core component :
-1. knative-serving 
+1. Knative Serving 
 ```
-kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.0.0/serving-crds.yaml
-kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.0.0/serving-core.yaml
+kubectl apply \
+  --filename https://github.com/knative/serving/releases/download/v0.24.0/serving-crds.yaml \
+  --filename https://github.com/knative/eventing/releases/download/v0.24.0/eventing-crds.yaml
+
+kubectl apply \
+  --filename \
+  https://github.com/knative/serving/releases/download/v0.24.0/serving-core.yaml
 ```
-2. knative-eventing
+2. Kourier Ingress Gateway
 ```
-kubectl apply -f https://github.com/knative/eventing/releases/download/knative-v1.0.0/eventing-crds.yaml
-kubectl apply -f https://github.com/knative/eventing/releases/download/knative-v1.0.0/eventing-core.yaml
+kubectl apply \
+  --filename \
+    https://github.com/knative/net-kourier/releases/download/v0.24.0/kourier.yaml
+
+kubectl patch configmap/config-network \
+  -n knative-serving \
+  --type merge \
+  -p '{"data":{"ingress.class":"kourier.ingress.networking.knative.dev"}}'
+```
+3. Contour Ingress Controller
+```
+kubectl apply \
+  --filename https://projectcontour.io/quickstart/contour.yaml
+```
+4. Knative Eventing
+```
+kubectl apply \
+  --filename \
+  https://github.com/knative/eventing/releases/download/v0.24.0/eventing-core.yaml \
+  --filename \
+  https://github.com/knative/eventing/releases/download/v0.24.0/in-memory-channel.yaml \
+  --filename \
+  https://github.com/knative/eventing/releases/download/v0.24.0/mt-channel-broker.yaml
 ```
 # Access Kubernetes Dashboard
 Access to kubernetes dashboard from browser
