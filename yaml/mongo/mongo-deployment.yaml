@@ -21,19 +21,13 @@ spec:
         args: ["--dbpath","/data/db"]
         env:
         - name: MONGO_INITDB_ROOT_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: mongo-creds
-              key: username
+          value: admin
         - name: MONGO_INITDB_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mongo-creds
-              key: password
+          value: password
         volumeMounts:
-        - name: "mongo-data-dir"
+        - name: mongo-data-dir
           mountPath: "/data/db"
       volumes:
-      - name: "mongo-data-dir"
+      - name: mongo-data-dir
         persistentVolumeClaim:
-          claimName: "pvc"
+          claimName: data-mongo-cluster

@@ -1,12 +1,30 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pvc
+  name: data-mongo-cluster
 spec:
-  storageClassName: ""
+  storageClassName: standard
   accessModes:
     - ReadWriteOnce 
-  volumeName: pv
+  volumeName: pvc-8d24b774-4acb-11ec-81d3-0242ac130003
   resources:
     requests:
       storage: 1Gi
+
+---
+
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pvc-8d24b774-4acb-11ec-81d3-0242ac130003
+spec:
+  capacity:
+    storage: 1Gi
+  hostPath:
+    path: /tmp/hostpath-provisioner/default/data-mongo-cluster-volume
+    type: ''
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: standard
+  volumeMode: Filesystem

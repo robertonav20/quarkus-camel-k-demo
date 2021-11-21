@@ -1,7 +1,7 @@
 apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
-  name: strimzi-persistence
+  name: strimzi-cluster
 spec:
   kafka:
     version: 3.0.0
