@@ -34,7 +34,7 @@ Launch minikube with :
 
 **If minikube has stopped, you must execute again Minikube permission**
 
-# Install Istio Namespace
+# Istio
 
      kubectl apply --filename https://raw.githubusercontent.com/knative/serving/v0.5.2/third_party/istio-1.0.7/istio-crds.yaml &&
                 curl -L https://raw.githubusercontent.com/knative/serving/v0.5.2/third_party/istio-1.0.7/istio.yaml \
