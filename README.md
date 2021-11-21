@@ -68,10 +68,15 @@ curl -L https://github.com/apache/camel-k/releases/download/v1.7.0/camel-k-clien
 tar -xf camel-k-client-1.7.0-linux-64bit.tar.gz
 ```
 2. Move kamel-cli
-`sudo mv kamel /usr/local/bin`
+
+    `sudo mv kamel /usr/local/bin`
+
 3. Read cluster ip registry of minikube
-`kubectl get service --namespace kube-system`
+
+    `kubectl get service --namespace kube-system`
+
 4. Install kamel
+
    `kamel install --registry cluster-ip-registry`
 
 # Apache Camel-K Documentations
