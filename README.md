@@ -95,7 +95,7 @@ tar -xf camel-k-client-1.7.0-linux-64bit.tar.gz
 
 4. Install kamel
 
-   `kamel install --registry cluster-ip-registry`
+   `kamel install --registry cluster-ip-registry --monitoring=true --monitoring-port=8888`
 
 # Apache Camel-K Documentations
 - Install guide : https://camel.apache.org/camel-k/next/installation/installation.html.
