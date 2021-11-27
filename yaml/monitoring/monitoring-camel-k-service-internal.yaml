@@ -29,10 +29,9 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: camel-k-integration-internal
+  name: camel-k-integration-mosquitto-producer-internal
   labels:
     app: camel-k
-    camel.apache.org/integration: producer
 spec:
   ports:
     - name: metrics
@@ -40,5 +39,21 @@ spec:
       port: 8080
       targetPort: 8080
   selector:
-    camel.apache.org/integration: producer
+    camel.apache.org/integration: mosquitto-producer
+  type: ClusterIP
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: camel-k-integration-mosquitto-processor-internal
+  labels:
+    app: camel-k
+spec:
+  ports:
+    - name: metrics
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    camel.apache.org/integration: mosquitto-processor
   type: ClusterIP

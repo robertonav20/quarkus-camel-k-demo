@@ -14,28 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * 
- * Read the documentation at https://camel.apache.org/components/next/paho-mqtt5-component.html#_samples
+ * Read the documentation at https://camel.apache.org/components/2.x/kafka-component.html
  */
 
 import org.apache.camel.builder.RouteBuilder;
 
-public class Producer extends RouteBuilder {
+public class MosquittoProcessor extends RouteBuilder {
 	@Override
 	public void configure() throws Exception {
-		from("timer:clock?period=5000")
-            .setBody()
-				.simple(getRandomEvent())
-			.log("${body}")
-			.to("paho-mqtt5:test.topic?brokerUrl=tcp://mosquitto:1883");
-
-		/*
-		* Test if mosquitto receive message
 		from("paho-mqtt5:test.topic?brokerUrl=tcp://mosquitto:1883")
 			.log("${body}");
-		*/
 	}
-
-    private String getRandomEvent() {
-        return "New random event!";
-    }
 }
