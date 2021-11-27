@@ -10,9 +10,7 @@ spec:
   resources:
     requests:
       storage: 1Gi
-
 ---
-
 kind: PersistentVolume
 apiVersion: v1
 metadata:
