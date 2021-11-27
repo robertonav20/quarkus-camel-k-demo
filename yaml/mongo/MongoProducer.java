@@ -32,9 +32,6 @@ public class MongoProducer extends RouteBuilder {
 			.simple("{ \"name\": \"NEW EVENT\"}")
 			.convertBodyTo(DBObject.class)
 			.log("${body}")
-		.to("mongodb:camelMongoClient?database=customerdb&collection=customer&operation=insert");
-
-		from("mongodb:camelMongoClient?database=customerdb&collection=customer")
-			.log("${body}");
+		.to("mongodb:camelMongoClient?database=test&collection=events&operation=insert");
 	}
 }
