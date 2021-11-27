@@ -1,9 +1,0 @@
-apiVersion: monitoring.coreos.com/v1
-kind: Prometheus
-metadata:
-  name: monitoring
-spec:
-  podMonitorSelector:
-    matchExpressions:
-      - key: camel.apache.org/integration
-        operator: Exists

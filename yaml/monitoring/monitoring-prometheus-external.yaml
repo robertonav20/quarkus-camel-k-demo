@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-eternal
+  labels:
+    app: prometheus
+spec:
+  type: NodePort
+  ports:
+  - port: 9090
+    nodePort: 30900
+    protocol: TCP
+  selector:
+    app: prometheus

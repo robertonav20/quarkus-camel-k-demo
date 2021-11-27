@@ -31,6 +31,12 @@ minikube start --memory=8192 --cpus=6 \
   --vm-driver=kvm2 \
   --disk-size=30g \
   --addons registry \
+  --addons ingress \
+  --bootstrapper=kubeadm \
+  --extra-config=kubelet.authentication-token-webhook=true \
+  --extra-config=kubelet.authorization-mode=Webhook \
+  --extra-config=scheduler.bind-address=0.0.0.0 \
+  --extra-config=controller-manager.bind-address=0.0.0.0 \
   --extra-config=apiserver.enable-admission-plugins="LimitRanger,NamespaceExists,NamespaceLifecycle,ResourceQuota,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook"
 ```
 
@@ -95,7 +101,7 @@ tar -xf camel-k-client-1.7.0-linux-64bit.tar.gz
 
 4. Install kamel
 
-   `kamel install --registry cluster-ip-registry --monitoring=true --monitoring-port=8888`
+   `kamel install --registry 10.96.168.162 --monitoring=true --force`
 
 # Apache Camel-K Documentations
 - Install guide : https://camel.apache.org/camel-k/next/installation/installation.html.

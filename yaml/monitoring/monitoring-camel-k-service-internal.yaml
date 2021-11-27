@@ -1,0 +1,44 @@
+apiVersion: camel.apache.org/v1
+kind: IntegrationPlatform
+metadata:
+  name: camel-k
+spec:
+  traits:
+    prometheus:
+      configuration:
+        enabled: true
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: camel-k-operator-internal
+  labels:
+    app: camel-k
+    camel.apache.org/component: operator
+spec:
+  ports:
+    - name: metrics
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: camel-k
+    camel.apache.org/component: operator
+  type: ClusterIP
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: camel-k-integration-internal
+  labels:
+    app: camel-k
+    camel.apache.org/integration: producer
+spec:
+  ports:
+    - name: metrics
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    camel.apache.org/integration: producer
+  type: ClusterIP

@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: camel-k-monitor
+  labels:
+    app: camel-k
+spec:
+  selector:
+    matchLabels:
+      app: camel-k
+  endpoints:
+  - port: metrics
+    interval: 5s
+  - path: /q/metrics
+    port: metrics
+    interval: 5s
