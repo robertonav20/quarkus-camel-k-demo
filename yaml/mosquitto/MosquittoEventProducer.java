@@ -15,21 +15,39 @@
  * limitations under the License.
  * 
  * Read the documentation at https://camel.apache.org/components/next/paho-mqtt5-component.html#_samples
+ * 
+ * kamel run --dev MosquittoEventProducer.java -d mvn:com.google.code.gson:gson:2.8.9
  */
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import java.lang.Integer;
+import java.util.Date;
+import java.util.UUID;
 
 public class MosquittoEventProducer extends RouteBuilder {
+	
+	private Gson gson = new Gson();
+
 	@Override
 	public void configure() throws Exception {
 		from("timer:clock?period=5000")
-            .setBody()
-				.simple(getRandomEvent())
+			.setBody().message(message -> getRandomEvent())
 			.log("${body}")
 			.to("paho-mqtt5:test.topic?brokerUrl=tcp://mosquitto:1883");
 	}
 
     private String getRandomEvent() {
-        return "New random event!";
+		JsonObject obj = new JsonObject();
+		obj.addProperty("id", UUID.randomUUID().toString());
+		obj.addProperty("date", new Date().toString());
+		obj.addProperty("name", "EVENT_" + ((int)(Math.random() * 10000)));
+		obj.addProperty("type", "EVENT");
+		obj.addProperty("type", "EVENT");
+
+        return gson.toJson(obj);
     }
 }
