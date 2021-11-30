@@ -24,7 +24,7 @@ public class MosquittoEventProducer extends RouteBuilder {
 	public void configure() throws Exception {
 		from("timer:clock?period=5000")
             .setBody()
-				.simple(getRandomEvent())
+				.simple(new TelepassIterator().next())
 			.log("${body}")
 			.to("paho-mqtt5:test.topic?brokerUrl=tcp://mosquitto:1883");
 	}
@@ -32,4 +32,25 @@ public class MosquittoEventProducer extends RouteBuilder {
     private String getRandomEvent() {
         return "New random event!";
     }
+	static class TelepassIterator{
+		Telepass next(){
+			String userID = nextUserId();
+			return new Telepass(userID);
+		}
+		private String nextUserId{
+			return "User"+ new Random().nextInt(50);
+		}
+	}
+}
+public class Telepass {
+	private String userID;
+	public Telepass(String userID){
+		this.userID=userID;
+	}
+	public String getUserID{
+		return userID;
+	}
+	public void setUserID(String userID){
+		this.userID = userID;
+	}
 }
