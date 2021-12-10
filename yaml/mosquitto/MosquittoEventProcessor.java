@@ -23,22 +23,18 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class MosquittoEventProcessor extends RouteBuilder {
 
-	private final String QUEUE_MAIN = "event.topic.main";
-	private final String QUEUE_SECONDARY = "event.topic.secondary";
-	private final String QUEUE_OTHERS = "event.topic.others";
-
 	@Override
 	public void configure() throws Exception {
-		from("paho-mqtt5:" + QUEUE_MAIN + "?brokerUrl=tcp://mosquitto:1883")
+		from("paho-mqtt5:event.topic.main?brokerUrl=tcp://mosquitto:1883")
 			.log("${body}")
-			.to("kafka:" + QUEUE_MAIN + "?brokers=strimzi-cluster-kafka-brokers:9092");
+			.to("kafka:event.topic.main?brokers=strimzi-cluster-kafka-brokers:9092");
 		
-		from("paho-mqtt5:" + QUEUE_SECONDARY + "?brokerUrl=tcp://mosquitto:1883")
+		from("paho-mqtt5:event.topic.secondary?brokerUrl=tcp://mosquitto:1883")
 			.log("${body}")
-			.to("kafka:" + QUEUE_SECONDARY + "?brokers=strimzi-cluster-kafka-brokers:9092");
+			.to("kafka:event.topic.secondary?brokers=strimzi-cluster-kafka-brokers:9092");
 			
-		from("paho-mqtt5:" + QUEUE_OTHERS + "?brokerUrl=tcp://mosquitto:1883")
+		from("paho-mqtt5:event.topic.others?brokerUrl=tcp://mosquitto:1883")
 			.log("${body}")
-			.to("kafka:" + QUEUE_OTHERS + "?brokers=strimzi-cluster-kafka-brokers:9092");
+			.to("kafka:event.topic.others?brokers=strimzi-cluster-kafka-brokers:9092");
 	}
 }

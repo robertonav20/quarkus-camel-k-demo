@@ -34,10 +34,6 @@ public class MosquittoEventProducer extends RouteBuilder {
 	
 	private Gson gson = new Gson();
 
-	private static final String QUEUE_MAIN = "event.topic.main";
-	private static final String QUEUE_SECONDARY = "event.topic.secondary";
-	private static final String QUEUE_OTHERS = "event.topic.others";
-
 	@Override
 	public void configure() throws Exception {
 		from("timer:clock?period=5000")
@@ -45,20 +41,17 @@ public class MosquittoEventProducer extends RouteBuilder {
 			.log("Generated event type ${header.eventType}")
 			.choice()
 				.when(simple("${header.eventType} < 3"))
-					.setHeader("eventQueue").message(message -> QUEUE_MAIN)
 					.setBody().message(message -> generateEvent((String) message.getHeader("eventType")))
-					.log("Send to " + QUEUE_MAIN + " ${body}")
-					.to("paho-mqtt5:${header.eventQueue}?brokerUrl=tcp://mosquitto:1883")
+					.log("Send to event.topic.main ${body}")
+					.to("paho-mqtt5:event.topic.main?brokerUrl=tcp://mosquitto:1883")
 				.when(simple("${header.eventType} >= 3 && ${header.eventType} < 7"))
-					.setHeader("eventQueue").message(message -> QUEUE_SECONDARY)
 					.setBody().message(message -> generateEvent((String) message.getHeader("eventType")))
-					.log("Send to " + QUEUE_SECONDARY + " ${body}")
-					.to("paho-mqtt5:${header.eventQueue}?brokerUrl=tcp://mosquitto:1883")
+					.log("Send to event.topic.secondary ${body}")
+					.to("paho-mqtt5:event.topic.secondary?brokerUrl=tcp://mosquitto:1883")
 				.otherwise()
-					.setHeader("eventQueue").message(message -> QUEUE_OTHERS)
 					.setBody().message(message -> generateEvent((String) message.getHeader("eventType")))
-					.log("Send to " + QUEUE_OTHERS + " ${body}")
-					.to("paho-mqtt5:${header.eventQueue}?brokerUrl=tcp://mosquitto:1883");
+					.log("Send to event.topic.others ${body}")
+					.to("paho-mqtt5:event.topic.others?brokerUrl=tcp://mosquitto:1883");
 	}
 
     private String generateType() {
