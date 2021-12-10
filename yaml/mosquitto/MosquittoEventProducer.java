@@ -22,32 +22,58 @@
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Expression;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.lang.Integer;
 import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 
 public class MosquittoEventProducer extends RouteBuilder {
 	
 	private Gson gson = new Gson();
 
+	private static final String QUEUE_MAIN = "event.topic.main";
+	private static final String QUEUE_SECONDARY = "event.topic.secondary";
+	private static final String QUEUE_OTHERS = "event.topic.others";
+
 	@Override
 	public void configure() throws Exception {
 		from("timer:clock?period=5000")
-			.setBody().message(message -> getRandomEvent())
-			.log("${body}")
-			.to("paho-mqtt5:test.topic?brokerUrl=tcp://mosquitto:1883");
+			.setHeader("eventType").message(message -> generateType())
+			.log("Generated event type ${header.eventType}")
+			.choice()
+				.when(simple("${header.eventType} < 3"))
+					.setHeader("eventQueue").message(message -> QUEUE_MAIN)
+					.setBody().message(message -> generateEvent((String) message.getHeader("eventType")))
+					.log("Send to " + QUEUE_MAIN + " ${body}")
+					.to("paho-mqtt5:${header.eventQueue}?brokerUrl=tcp://mosquitto:1883")
+				.when(simple("${header.eventType} >= 3 && ${header.eventType} < 7"))
+					.setHeader("eventQueue").message(message -> QUEUE_SECONDARY)
+					.setBody().message(message -> generateEvent((String) message.getHeader("eventType")))
+					.log("Send to " + QUEUE_SECONDARY + " ${body}")
+					.to("paho-mqtt5:${header.eventQueue}?brokerUrl=tcp://mosquitto:1883")
+				.otherwise()
+					.setHeader("eventQueue").message(message -> QUEUE_OTHERS)
+					.setBody().message(message -> generateEvent((String) message.getHeader("eventType")))
+					.log("Send to " + QUEUE_OTHERS + " ${body}")
+					.to("paho-mqtt5:${header.eventQueue}?brokerUrl=tcp://mosquitto:1883");
 	}
 
-    private String getRandomEvent() {
-		JsonObject obj = new JsonObject();
-		obj.addProperty("id", UUID.randomUUID().toString());
-		obj.addProperty("date", new Date().toString());
-		obj.addProperty("name", "EVENT_" + ((int)(Math.random() * 10000)));
-		obj.addProperty("type", "EVENT");
-		obj.addProperty("type", "EVENT");
+    private String generateType() {
+		int random = (int) (Math.random() * 10);
+		String type = String.valueOf(random);
+		return type;
+	}
 
-        return gson.toJson(obj);
+	private String generateEvent(String type) {
+		JsonObject event = new JsonObject();
+		event.addProperty("id", UUID.randomUUID().toString());
+		event.addProperty("date", new Date().toString());
+		event.addProperty("name", "EVENT_" + ((int)(Math.random() * 10000)));
+		event.addProperty("type", type);
+		
+		return gson.toJson(event);
     }
 }

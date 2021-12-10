@@ -6,10 +6,12 @@ kamel run --trait knative.enabled=true \
     --trait knative.auto=true \
     --trait knative-service.enabled=true \
     --trait knative-service.auto=true \
-    MosquittoProducer.java
+    MosquittoEventProducer.java \
+    -d mvn:com.google.code.gson:gson:2.8.9
 
 kamel run --trait knative.enabled=true \
     --trait knative.auto=true \
     --trait knative-service.enabled=true \
     --trait knative-service.auto=true \
-    MosquittoProcessor.java
+    MosquittoEventProcessor.java \
+    -d mvn:com.google.code.gson:gson:2.8.9
