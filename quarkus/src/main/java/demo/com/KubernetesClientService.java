@@ -11,7 +11,6 @@ public class KubernetesClientService {
 
     @Produces
     public KubernetesClient kubernetesClient() {
-        // here you would create a custom client
         return new DefaultKubernetesClient();
     }
 }
