@@ -28,8 +28,7 @@ public class KnativeEventProcessor extends RouteBuilder {
 	public void configure() throws Exception {
         from("knative:event/event.topic.main")
             .log("${body}")
-			.convertBodyTo(DBObject.class)
-			.log("${body}")
+			.convertBodyTo(String.class)
         .to("mongodb:camelMongoClient?database=test&collection=event.main&operation=insert")
             .removeHeaders("*")
             .setBody()
@@ -37,8 +36,7 @@ public class KnativeEventProcessor extends RouteBuilder {
 
         from("knative:event/event.topic.secondary")
             .log("${body}")
-			.convertBodyTo(DBObject.class)
-			.log("${body}")
+			.convertBodyTo(String.class)
         .to("mongodb:camelMongoClient?database=test&collection=event.secondary&operation=insert")
             .removeHeaders("*")
             .setBody()
@@ -46,8 +44,7 @@ public class KnativeEventProcessor extends RouteBuilder {
             
         from("knative:event/event.topic.others")
             .log("${body}")
-            .convertBodyTo(DBObject.class)
-            .log("${body}")
+            .convertBodyTo(String.class)
         .to("mongodb:camelMongoClient?database=test&collection=event.others&operation=insert")
             .removeHeaders("*")
             .setBody()
