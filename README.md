@@ -43,43 +43,8 @@ minikube start --memory=8192 --cpus=6 \
 **If minikube has stopped, you must execute again Minikube permission**
 
 # Knative
-Install knative core component :
-1. Knative Serving 
-```
-kubectl apply \
-  --filename https://github.com/knative/serving/releases/download/v0.24.0/serving-crds.yaml \
-  --filename https://github.com/knative/eventing/releases/download/v0.24.0/eventing-crds.yaml
+Navigate to knative folder and launch knative.sh
 
-kubectl apply \
-  --filename \
-  https://github.com/knative/serving/releases/download/v0.24.0/serving-core.yaml
-```
-2. Kourier Ingress Gateway
-```
-kubectl apply \
-  --filename \
-    https://github.com/knative/net-kourier/releases/download/v0.24.0/kourier.yaml
-
-kubectl patch configmap/config-network \
-  -n knative-serving \
-  --type merge \
-  -p '{"data":{"ingress.class":"kourier.ingress.networking.knative.dev"}}'
-```
-3. Contour Ingress Controller
-```
-kubectl apply \
-  --filename https://projectcontour.io/quickstart/contour.yaml
-```
-4. Knative Eventing
-```
-kubectl apply \
-  --filename \
-  https://github.com/knative/eventing/releases/download/v0.24.0/eventing-core.yaml \
-  --filename \
-  https://github.com/knative/eventing/releases/download/v0.24.0/in-memory-channel.yaml \
-  --filename \
-  https://github.com/knative/eventing/releases/download/v0.24.0/mt-channel-broker.yaml
-```
 # Access Kubernetes Dashboard
 Access to kubernetes dashboard from browser
 ```
