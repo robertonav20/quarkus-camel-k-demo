@@ -16,7 +16,7 @@
  * 
  * Read the documentation at https://camel.apache.org/components/2.x/kafka-component.html
  * 
- * kamel run --dev MosquittoEventProcessor.java -d mvn:com.google.code.gson:gson:2.8.9
+ * kamel run --dev MosquittoEventProcessor.java
  */
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,14 +27,14 @@ public class MosquittoEventProcessor extends RouteBuilder {
 	public void configure() throws Exception {
 		from("paho-mqtt5:event.topic.main?brokerUrl=tcp://mosquitto:1883")
 			.log("${body}")
-			.to("kafka:event.topic.main?brokers=strimzi-cluster-kafka-brokers:9092");
+			.to("knative:event/event.topic.main");
 		
 		from("paho-mqtt5:event.topic.secondary?brokerUrl=tcp://mosquitto:1883")
 			.log("${body}")
-			.to("kafka:event.topic.secondary?brokers=strimzi-cluster-kafka-brokers:9092");
+			.to("knative:event/event.topic.secondary");
 			
 		from("paho-mqtt5:event.topic.others?brokerUrl=tcp://mosquitto:1883")
 			.log("${body}")
-			.to("kafka:event.topic.others?brokers=strimzi-cluster-kafka-brokers:9092");
+			.to("knative:event/event.topic.others");
 	}
 }

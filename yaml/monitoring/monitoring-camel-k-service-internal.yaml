@@ -57,3 +57,19 @@ spec:
   selector:
     camel.apache.org/integration: mosquitto-event-processor
   type: ClusterIP
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: camel-k-integration-knative-event-processor-internal
+  labels:
+    app: camel-k
+spec:
+  ports:
+    - name: metrics
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    camel.apache.org/integration: knative-event-processor
+  type: ClusterIP

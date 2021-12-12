@@ -13,3 +13,5 @@ kubectl apply -f https://github.com/knative/eventing/releases/download/knative-v
 kubectl apply -f https://github.com/knative/eventing/releases/download/knative-v1.0.0/eventing-core.yaml
 kubectl apply -f https://github.com/knative/eventing/releases/download/knative-v1.0.0/in-memory-channel.yaml
 kubectl apply -f https://github.com/knative/eventing/releases/download/knative-v1.0.0/mt-channel-broker.yaml
+
+kn broker create default
