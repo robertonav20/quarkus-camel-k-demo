@@ -30,8 +30,10 @@ minikube start --memory=8192 --cpus=6 \
   --kubernetes-version=v1.22.3 \
   --vm-driver=kvm2 \
   --disk-size=30g \
+  --addons dashboard \
   --addons registry \
   --addons ingress \
+  --addons ingress-dns \
   --bootstrapper=kubeadm \
   --extra-config=kubelet.authentication-token-webhook=true \
   --extra-config=kubelet.authorization-mode=Webhook \
@@ -43,12 +45,14 @@ minikube start --memory=8192 --cpus=6 \
 **If minikube has stopped, you must execute again Minikube permission**
 
 # Knative
+Before launch it's necessary install istioctl binary
 Navigate to knative folder and launch knative.sh
 
 # Access Kubernetes Dashboard
 Access to kubernetes dashboard from browser
 ```
 minikube dashboard
+kubectl --namespace kubernetes-dashboard patch svc kubernetes-dashboard -p '{"spec": {"type": "NodePort"}}'
 ```
 # Install Camel-K
 1. Download binary kamel-cli
@@ -66,9 +70,32 @@ tar -xf camel-k-client-1.7.0-linux-64bit.tar.gz
 
 4. Install kamel
 
-   `kamel install --registry 10.101.24.154 --monitoring=true --force`
+   `kamel install --registry registry.kube-system --monitoring=true --force`
 
 # Apache Camel-K Documentations
 - Install guide : https://camel.apache.org/camel-k/next/installation/installation.html.
 - Component : https://camel.apache.org/components/3.13.x/index.html
 
+# Ingress DNS
+
+Linux OS with Network Manager
+Network Manager can run integrated caching DNS server - dnsmasq plugin and can be configured to use separate nameservers per domain.
+
+```
+sudo vi /etc/NetworkManager/NetworkManager.conf
+```
+Set the field dns=dnsmasq
+
+[main]
+dns=dnsmasq
+Also see dns= in NetworkManager.conf.
+
+Configure dnsmasq to handle .testing and .local domain
+
+sudo mkdir /etc/NetworkManager/dnsmasq.d/
+echo "server=/testing/$(minikube ip)" > /etc/NetworkManager/dnsmasq.d/minikube.conf
+echo "server=/local/$(minikube ip)" > /etc/NetworkManager/dnsmasq.d/minikube.conf
+
+Restart Network Manager
+
+sudo systemctl restart NetworkManager.service
