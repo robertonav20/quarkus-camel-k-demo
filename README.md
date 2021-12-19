@@ -45,7 +45,6 @@ minikube start --memory=8192 --cpus=6 \
 **If minikube has stopped, you must execute again Minikube permission**
 
 # Knative
-Before launch it's necessary install istioctl binary
 Navigate to knative folder and launch knative.sh
 
 # Access Kubernetes Dashboard
