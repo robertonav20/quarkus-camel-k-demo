@@ -30,7 +30,6 @@ minikube start --memory=8192 --cpus=6 \
   --kubernetes-version=v1.22.3 \
   --vm-driver=kvm2 \
   --disk-size=30g \
-  --addons dashboard \
   --addons registry \
   --addons ingress \
   --addons ingress-dns \
@@ -69,7 +68,7 @@ tar -xf camel-k-client-1.7.0-linux-64bit.tar.gz
 
 4. Install kamel
 
-   `kamel install --registry registry.kube-system --monitoring=true --force`
+   `kamel install --registry registry.local --monitoring=true --force`
 
 # Apache Camel-K Documentations
 - Install guide : https://camel.apache.org/camel-k/next/installation/installation.html.

@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kourier-ingress
+  namespace: kourier-system
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: '*.default.local'
+    http:
+     paths:
+       - path: /
+         pathType: Prefix
+         backend:
+           service:
+             name: kourier-gateway
+             port:
+               number: 8080

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kourier-gateway
+  namespace: kourier-system
+  labels:
+    app: kourier-gateway
+spec:
+  ports:
+  - port: 8080
+    name: http
+    targetPort: 8080
+  - port: 19000
+    name: other
+    targetPort: 19000
+  - port: 8443
+    name: https
+    targetPort: 8443
+  selector:
+    app.kubernetes.io/component: net-kourier
