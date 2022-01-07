@@ -1,38 +1,13 @@
 import {createApp} from 'vue'
-import {createRouter, createWebHistory} from 'vue-router';
 import App from '@/App.vue'
-import Main from "@/components/Main";
-import Kubernetes from "@/components/Kubernetes";
+import router from "@/router";
 
-import vuetify from './plugins/vuetify'
-import {loadFonts} from './plugins/webfontloader'
-
-const routes = [
-    {
-        path: '/',
-        name: 'root',
-        component: Main
-    },
-    {
-        path: '/main',
-        name: 'main',
-        component: Main
-    },
-    {
-        path: '/kubernetes',
-        name: 'kubernetes',
-        component: Kubernetes
-    }
-];
-
-const router = createRouter({
-    history: createWebHistory(),
-    routes,
-});
-
-loadFonts()
+import BalmUI from 'balm-ui'; // Official Google Material Components
+import BalmUIPlus from 'balm-ui-plus'; // BalmJS Team Material Components
+import 'balm-ui-css';
 
 createApp(App)
-    .use(vuetify)
     .use(router)
-    .mount('#app')
+    .use(BalmUI)
+    .use(BalmUIPlus)
+    .mount('#app');
