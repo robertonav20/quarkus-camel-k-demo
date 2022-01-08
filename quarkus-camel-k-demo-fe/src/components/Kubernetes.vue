@@ -1,21 +1,21 @@
 <template>
-  <ui-grid class="grid">
-    <ui-grid-cell :columns="{default:12}" class="cell">
-      <ui-card>
+  <div class="kubernetes-container">
+    <div class="kubernetes-card">
+      <ui-card style="width: 100%;">
         <ui-card-content>
-          <ui-card-content style="padding: 15px">
-            <ui-card-text><ui-chip style="background-color: #326ce5; color: white">Kubernetes Pods</ui-chip></ui-card-text>
+          <ui-card-content style="padding: 15px; background-color: #326ce5">
+            <ui-card-text style="color: white">Kubernetes Pods</ui-card-text>
           </ui-card-content>
           <ui-list-divider></ui-list-divider>
           <ui-card-content style="padding: 15px">
             <ui-table
-                :data="data"
+                :data="pods"
                 :tbody="tbody"
                 :thead="thead"
                 fullwidth
             >
               <template #actions="{ data }">
-                <ui-icon @click="show(data)" style="color: #326ce5">description</ui-icon>
+                <ui-icon style="color: #326ce5" @click="show(data)">description</ui-icon>
               </template>
               <ui-pagination
                   v-model="page"
@@ -33,26 +33,39 @@
           </ui-card-icons>
         </ui-card-actions>
       </ui-card>
-    </ui-grid-cell>
-  </ui-grid>
+    </div>
+  </div>
+  <ui-dialog v-model="open">
+    <ui-dialog-title>{{pod.metadata?.name}}</ui-dialog-title>
+    <ui-dialog-content>
+      {{pod}}
+    </ui-dialog-content>
+    <ui-dialog-actions></ui-dialog-actions>
+  </ui-dialog>
 </template>
 
 <script>
+import {getPods} from "@/service/kubernetes.service";
+
 export default {
   name: 'Kubernetes',
   data() {
     return {
       thead: [
         {
-          value: 'id',
+          value: 'Ip',
           align: 'center'
         },
         {
-          value: 'creationDate',
+          value: 'Name',
           align: 'center'
         },
         {
-          value: 'type',
+          value: 'Status',
+          align: 'center'
+        },
+        {
+          value: 'Namespace',
           align: 'center'
         },
         {
@@ -62,15 +75,19 @@ export default {
       ],
       tbody: [
         {
-          value: 'id',
+          fn: data => data.status.podIP,
           align: 'center'
         },
         {
-          value: 'creationDate',
+          fn: data => data.metadata.name,
           align: 'center'
         },
         {
-          value: 'type',
+          fn: data => data.status.phase,
+          align: 'center'
+        },
+        {
+          fn: data => data.metadata.namespace,
           align: 'center'
         },
         {
@@ -79,21 +96,47 @@ export default {
           slot: 'actions'
         }
       ],
-      data: [{
-        id: '1',
-        creationDate: '2021',
-        type: 'TYPE'
-      }],
+      pod: {},
+      pods: [],
+      open: false,
       page: 1,
       total: 1,
       webSocketConnection: null
     }
   },
+  created() {
+    getPods()
+        .then(response => {
+          this.pods = response.data
+          this.total = response.data.length
+        })
+        .catch(error => console.log(error))
+  },
   methods: {
     show(data) {
       console.log(data);
+      this.pod = data;
+      this.open = true;
     },
-    onPage() {}
+    onPage() {
+    }
   }
 }
 </script>
+
+<style scoped>
+.kubernetes-container {
+  display: flex;
+  justify-content: center;
+  justify-self: center;
+  width: 100%;
+  padding: 2em;
+}
+.kubernetes-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+</style>

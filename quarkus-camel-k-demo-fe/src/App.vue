@@ -1,6 +1,6 @@
 <template>
-  <ui-grid class="grid" style="height: 100%; padding: 0px">
-    <ui-grid-cell :columns="{default: 3}" class="cell">
+  <div class="layout" style="height: 100%; padding: 0px">
+    <div class="sidebar" :columns="{default: 2}">
       <ui-drawer nav-id="nav" type="permanent">
         <ui-drawer-header>
           <ui-drawer-title>
@@ -26,11 +26,11 @@
           </div>
         </ui-drawer-content>
       </ui-drawer>
-    </ui-grid-cell>
-    <ui-grid-cell :columns="{default: 9}" class="demo-cell">
+    </div>
+    <div class="content">
       <router-view></router-view>
-    </ui-grid-cell>
-  </ui-grid>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -60,14 +60,13 @@ export default {
     this.webSocketConnection.onmessage = function (event) {
       console.log('Received message!')
       console.log(event);
-      const data = event.data
-      if (data.search('{') > -1) {
-        const e = JSON.parse(data.substring(data.indexOf('{'), data.length));
-        component.$toast(e.message)
-        if (e.type === 'START') {
+      if (event.data) {
+        const data = JSON.parse(event.data)
+        component.$toast(data.message)
+        if (data.type === 'START') {
           component.status = true;
         }
-        if (e.type === 'STOP') {
+        if (data.type === 'STOP') {
           component.status = false;
         }
       }
@@ -81,6 +80,22 @@ export default {
 </script>
 
 <style scoped>
+.layout {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.sidebar {
+  width: auto;
+}
+.content {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 3em;
+}
+
 .mdc-drawer__header {
   background-color: #326ce5;
   color: white !important;

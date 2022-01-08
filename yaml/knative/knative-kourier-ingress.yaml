@@ -5,7 +5,9 @@ metadata:
   namespace: kourier-system
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/proxy-body-size: '0'
+    nginx.ingress.kubernetes.io/enable-cors: 'true'
+    nginx.ingress.kubernetes.io/cors-allow-origin: '*'
 spec:
   ingressClassName: nginx
   rules:
@@ -19,12 +21,3 @@ spec:
              name: kourier-gateway
              port:
                number: 8080
-    https:
-     paths:
-       - path: /
-         pathType: Prefix
-         backend:
-           service:
-             name: kourier-gateway
-             port:
-               number: 8443

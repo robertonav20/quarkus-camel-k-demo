@@ -1,5 +1,7 @@
 package demo.com;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -12,21 +14,30 @@ import javax.websocket.server.ServerEndpoint;
 public class WebSocketServer {
 
     private static final Logger logger = Logger.getLogger(WebSocketServer.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     Session frontedSession;
     Session backendSession;
 
     @OnOpen
-    public void onOpen(Session session, @PathParam("component") String component) {
+    public void onOpen(Session session, @PathParam("component") String component) throws JsonProcessingException {
         if (component.equalsIgnoreCase("frontend")) {
             frontedSession = session;
+            if (backendSession != null) {
+                WebSocketServerEvent event = WebSocketServerEvent.builder()
+                    .type("START")
+                    .component("backend")
+                    .message("The backend join!")
+                    .build();
+                broadcast(this.objectMapper.writeValueAsString(event), session);
+            }
         } else if (component.equalsIgnoreCase("backend")) {
             backendSession = session;
         }
     }
 
     @OnClose
-    public void onClose(Session session, @PathParam("component") String component) {
+    public void onClose(Session session, @PathParam("component") String component) throws JsonProcessingException {
         if (component.equalsIgnoreCase("frontend")) {
             frontedSession = null;
             session = backendSession;
@@ -34,11 +45,16 @@ public class WebSocketServer {
             backendSession = null;
             session = frontedSession;
         }
-        broadcast("User " + component + " left", session);
+        WebSocketServerEvent event = WebSocketServerEvent.builder()
+            .type("STOP")
+            .component(component)
+            .message("The " + component + " left!")
+            .build();
+        broadcast(this.objectMapper.writeValueAsString(event), session);
     }
 
     @OnError
-    public void onError(Session session, @PathParam("component") String component, Throwable throwable) {
+    public void onError(Session session, @PathParam("component") String component, Throwable throwable) throws JsonProcessingException {
         if (component.equalsIgnoreCase("frontend")) {
             frontedSession = null;
             session = backendSession;
@@ -46,7 +62,12 @@ public class WebSocketServer {
             backendSession = null;
             session = frontedSession;
         }
-        broadcast("User " + component + " left on error: " + throwable, session);
+        WebSocketServerEvent event = WebSocketServerEvent.builder()
+                .type("STOP")
+                .component(component)
+                .message("The " + component + " left with error!")
+                .build();
+        broadcast(this.objectMapper.writeValueAsString(event), session);
     }
 
     @OnMessage
@@ -58,11 +79,7 @@ public class WebSocketServer {
         } else if (component.equalsIgnoreCase("backend")) {
             session = frontedSession;
         }
-        if (message.equalsIgnoreCase("_ready_")) {
-            broadcast("User " + component + " joined", session);
-        } else {
-            broadcast(">> " + component + ": " + message, session);
-        }
+        broadcast(message, session);
     }
 
     private void broadcast(String message, Session session) {
