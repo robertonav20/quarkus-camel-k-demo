@@ -29,7 +29,7 @@
         <ui-divider></ui-divider>
         <ui-card-actions>
           <ui-card-icons>
-            <ui-icon-button icon="refresh" style="color: #326ce5"></ui-icon-button>
+            <ui-icon-button icon="refresh" style="color: #326ce5" @click="sendMessage"></ui-icon-button>
           </ui-card-icons>
         </ui-card-actions>
       </ui-card>
@@ -85,7 +85,22 @@ export default {
         type: 'TYPE'
       }],
       page: 1,
-      total: 1
+      total: 1,
+      webSocketConnection: null
+    }
+  },
+  created: function() {
+    console.log("Starting connection to WebSocket Server")
+    this.webSocketConnection = new WebSocket('ws://localhost:8081/events/kubernetes')
+
+    this.webSocketConnection.onmessage = function(event) {
+      console.log('Received message!')
+      console.log(event);
+    }
+
+    this.webSocketConnection.onopen = function(event) {
+      console.log(event)
+      console.log("Successfully connected to the echo websocket server...")
     }
   },
   methods: {
@@ -93,6 +108,10 @@ export default {
       console.log(data);
     },
     onPage() {
+    },
+    sendMessage() {
+      console.log('Send message!')
+      this.webSocketConnection.send('message')
     }
   }
 }
