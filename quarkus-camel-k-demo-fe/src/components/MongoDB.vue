@@ -4,7 +4,7 @@
       <ui-card>
         <ui-card-content>
           <ui-card-content style="padding: 15px">
-            <ui-card-text>Mongo Events</ui-card-text>
+            <ui-card-text><ui-chip style="background-color: #326ce5; color: white">Mongo Events</ui-chip></ui-card-text>
           </ui-card-content>
           <ui-list-divider></ui-list-divider>
           <ui-card-content style="padding: 15px">

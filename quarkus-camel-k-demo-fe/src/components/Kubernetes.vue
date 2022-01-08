@@ -4,7 +4,7 @@
       <ui-card>
         <ui-card-content>
           <ui-card-content style="padding: 15px">
-            <ui-card-text>Kubernetes Pods</ui-card-text>
+            <ui-card-text><ui-chip style="background-color: #326ce5; color: white">Kubernetes Pods</ui-chip></ui-card-text>
           </ui-card-content>
           <ui-list-divider></ui-list-divider>
           <ui-card-content style="padding: 15px">
@@ -29,7 +29,7 @@
         <ui-divider></ui-divider>
         <ui-card-actions>
           <ui-card-icons>
-            <ui-icon-button icon="refresh" style="color: #326ce5" @click="sendMessage"></ui-icon-button>
+            <ui-icon-button icon="refresh" style="color: #326ce5"></ui-icon-button>
           </ui-card-icons>
         </ui-card-actions>
       </ui-card>
@@ -89,30 +89,11 @@ export default {
       webSocketConnection: null
     }
   },
-  created: function() {
-    console.log("Starting connection to WebSocket Server")
-    this.webSocketConnection = new WebSocket('ws://localhost:8081/sessions/frontend')
-
-    this.webSocketConnection.onmessage = function(event) {
-      console.log('Received message!')
-      console.log(event);
-    }
-
-    this.webSocketConnection.onopen = function(event) {
-      console.log(event)
-      console.log("Successfully connected to the echo websocket server...")
-    }
-  },
   methods: {
     show(data) {
       console.log(data);
     },
-    onPage() {
-    },
-    sendMessage() {
-      console.log('Send message!')
-      this.webSocketConnection.send('message')
-    }
+    onPage() {}
   }
 }
 </script>

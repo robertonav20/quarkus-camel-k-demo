@@ -51,7 +51,7 @@ public class WebSocketServer {
 
     @OnMessage
     public void onMessage(String message, @PathParam("component") String component) {
-        logger.info("Receiver a message!");
+        logger.info("Received a message : " + message);
         Session session = null;
         if (component.equalsIgnoreCase("frontend")) {
             session = backendSession;
