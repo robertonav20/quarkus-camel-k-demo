@@ -7,7 +7,7 @@
             <ui-icon round style="font-size: 30px">monitor</ui-icon>
           </ui-drawer-title>
           <ui-drawer-title>
-            <span>{{routeName}}</span>
+            <span>{{$route.name}}</span>
           </ui-drawer-title>
           <ui-drawer-subtitle>Dashboard</ui-drawer-subtitle>
         </ui-drawer-header>
@@ -32,8 +32,7 @@ export default {
   name: 'App',
   data() {
     return {
-      routes: this.$router.getRoutes(),
-      routeName: this.$route.name
+      routes: this.$router.getRoutes()
     }
   }
 }

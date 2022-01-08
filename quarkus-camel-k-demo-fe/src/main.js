@@ -8,6 +8,11 @@ import 'balm-ui-css';
 
 createApp(App)
     .use(router)
-    .use(BalmUI)
+    .use(BalmUI, {
+        $theme: {
+            primary: '#326ce5',
+            secondary: '#11cc4b'
+        }
+    })
     .use(BalmUIPlus)
     .mount('#app');
