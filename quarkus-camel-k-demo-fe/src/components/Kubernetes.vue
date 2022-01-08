@@ -91,7 +91,7 @@ export default {
   },
   created: function() {
     console.log("Starting connection to WebSocket Server")
-    this.webSocketConnection = new WebSocket('ws://localhost:8081/events/kubernetes')
+    this.webSocketConnection = new WebSocket('ws://localhost:8081/sessions/frontend')
 
     this.webSocketConnection.onmessage = function(event) {
       console.log('Received message!')

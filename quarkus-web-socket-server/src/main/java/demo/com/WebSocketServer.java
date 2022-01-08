@@ -9,48 +9,71 @@ import javax.websocket.server.ServerEndpoint;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@ServerEndpoint("/events/{component}")
+@ServerEndpoint("/sessions/{component}")
 @ApplicationScoped
 public class WebSocketServer {
 
     private static final Logger logger = Logger.getLogger(WebSocketServer.class);
 
-    Map<String, Session> sessions = new ConcurrentHashMap<>();
+    Session frontedSession;
+    Session backendSession;
 
     @OnOpen
     public void onOpen(Session session, @PathParam("component") String component) {
-        sessions.put(component, session);
+        if (component.equalsIgnoreCase("frontend")) {
+            frontedSession = session;
+        } else if (component.equalsIgnoreCase("backend")) {
+            backendSession = session;
+        }
     }
 
     @OnClose
     public void onClose(Session session, @PathParam("component") String component) {
-        sessions.remove(component);
-        broadcast("User " + component + " left");
+        if (component.equalsIgnoreCase("frontend")) {
+            frontedSession = null;
+            session = backendSession;
+        } else if (component.equalsIgnoreCase("backend")) {
+            backendSession = null;
+            session = frontedSession;
+        }
+        broadcast("User " + component + " left", session);
     }
 
     @OnError
     public void onError(Session session, @PathParam("component") String component, Throwable throwable) {
-        sessions.remove(component);
-        broadcast("User " + component + " left on error: " + throwable);
+        if (component.equalsIgnoreCase("frontend")) {
+            frontedSession = null;
+            session = backendSession;
+        } else if (component.equalsIgnoreCase("backend")) {
+            backendSession = null;
+            session = frontedSession;
+        }
+        broadcast("User " + component + " left on error: " + throwable, session);
     }
 
     @OnMessage
     public void onMessage(String message, @PathParam("component") String component) {
         logger.info("Receiver a message!");
+        Session session = null;
+        if (component.equalsIgnoreCase("frontend")) {
+            session = backendSession;
+        } else if (component.equalsIgnoreCase("backend")) {
+            session = frontedSession;
+        }
         if (message.equalsIgnoreCase("_ready_")) {
-            broadcast("User " + component + " joined");
+            broadcast("User " + component + " joined", session);
         } else {
-            broadcast(">> " + component + ": " + message);
+            broadcast(">> " + component + ": " + message, session);
         }
     }
 
-    private void broadcast(String message) {
-        sessions.values().forEach(s -> {
-            s.getAsyncRemote().sendObject(message, result -> {
+    private void broadcast(String message, Session session) {
+        if (session != null) {
+            session.getAsyncRemote().sendObject(message, result -> {
                 if (result.getException() != null) {
                     logger.info("Unable to send message: " + result.getException());
                 }
             });
-        });
+        }
     }
 }
