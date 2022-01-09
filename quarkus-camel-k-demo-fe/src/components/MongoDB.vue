@@ -93,7 +93,7 @@ export default {
       getEvents(this.collection, this.page - 1, this.pageSize)
         .then(response => {
           this.events = response.data
-          this.total = response.data.length
+          this.total = response.headers.total
         })
         .catch(error => console.log(error))
     },
