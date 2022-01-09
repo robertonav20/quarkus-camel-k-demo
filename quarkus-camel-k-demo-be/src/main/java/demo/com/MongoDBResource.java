@@ -1,28 +1,45 @@
 package demo.com;
 
-import demo.com.mongodb.MongoEvent;
-import demo.com.mongodb.MongoEventService;
-import org.bson.codecs.configuration.CodecRegistry;
+import demo.com.mongodb.MongoEventMain;
+import demo.com.mongodb.MongoEventOther;
+import demo.com.mongodb.MongoEventSecondary;
+import io.quarkus.mongodb.panache.PanacheQuery;
+import io.quarkus.panache.common.Page;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import java.util.Collections;
 import java.util.List;
 
-@Path("/mongo")
+@Path("/events")
 public class MongoDBResource {
 
-    private final MongoEventService mongoEventService;
-
-    public MongoDBResource(MongoEventService mongoEventService, CodecRegistry codecRegistry) {
-        this.mongoEventService = mongoEventService;
-    }
-
     @GET
-    @Path("/events/{collection}/")
-    public List<MongoEvent> getEventsByCollection(
-            @PathParam("collection") String collection
+    @Path("/{collection}")
+    public List getEventsByCollection(
+            @PathParam("collection") String collection,
+            @QueryParam("size") Integer pageSize,
+            @QueryParam("page") Integer pageIndex
     ) {
-        return mongoEventService.getEventsByCollection(collection);
+        Integer size = pageSize != null ? pageSize : 5;
+        Integer start = pageIndex != null ? pageIndex * size : 0;
+        Integer end = start + size;
+
+        if (collection.equalsIgnoreCase("event.main")) {
+            PanacheQuery<MongoEventMain> mongoEvents = MongoEventMain.findAll();
+            mongoEvents.page(Page.of(start, end));
+            return mongoEvents.list();
+        } else if (collection.equalsIgnoreCase("event.secondary")) {
+            PanacheQuery<MongoEventSecondary> mongoEvents = MongoEventSecondary.findAll();
+            mongoEvents.page(Page.of(start, end));
+            return mongoEvents.list();
+        } else if (collection.equalsIgnoreCase("event.others")) {
+            PanacheQuery<MongoEventOther> mongoEvents = MongoEventOther.findAll();
+            mongoEvents.page(Page.of(start, end));
+            return mongoEvents.list();
+        }
+        return Collections.emptyList();
     }
 }

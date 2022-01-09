@@ -20,6 +20,7 @@
               <ui-pagination
                   v-model="page"
                   :total="total"
+                  :page-size="pageSize"
                   show-total
                   @change="onPage"
               ></ui-pagination>
@@ -100,6 +101,7 @@ export default {
       pods: [],
       open: false,
       page: 1,
+      pageSize: 5,
       total: 1
     }
   },

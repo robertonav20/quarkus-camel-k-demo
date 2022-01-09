@@ -17,6 +17,7 @@
               <ui-pagination
                   v-model="page"
                   :total="total"
+                  :page-size="pageSize"
                   show-total
                   @change="onPage"
               ></ui-pagination>
@@ -43,34 +44,44 @@ export default {
     return {
       thead: [
         {
-          value: 'id',
+          value: 'Id',
           align: 'center'
         },
         {
-          value: 'creationDate',
+          value: 'Date',
           align: 'center'
         },
         {
-          value: 'type',
+          value: 'Name',
+          align: 'center'
+        },
+        {
+          value: 'Type',
           align: 'center'
         }
       ],
       tbody: [
         {
-          value: 'id',
+          fn: data => data.id,
           align: 'center'
         },
         {
-          value: 'creationDate',
+          fn: data => data.date,
           align: 'center'
         },
         {
-          value: 'type',
+          fn: data => data.name,
+          align: 'center'
+        },
+        {
+          fn: data => data.type,
           align: 'center'
         }
       ],
       events: [],
+      collection: 'event.main',
       page: 1,
+      pageSize: 5,
       total: 1
     }
   },
@@ -79,7 +90,7 @@ export default {
   },
   methods: {
     loadEvents() {
-      getEvents()
+      getEvents(this.collection, this.page - 1, this.pageSize)
         .then(response => {
           this.events = response.data
           this.total = response.data.length

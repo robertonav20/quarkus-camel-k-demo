@@ -1,9 +1,21 @@
 import axios from 'axios'
 
-const baseUrl = 'http://quarkus-camel-k-demo.default.local/mongo/'
+const baseUrl = 'http://localhost:8080/events/'
 
-export function getEvents() {
+export function getEvents(collection, pageIndex, pageSize) {
     let path = ''
-
-    return axios.get(baseUrl + path);
+    let page = 0
+    let size = 5
+    if (collection) {
+        path = collection
+    } else {
+        path = 'event.main'
+    }
+    if (pageIndex) {
+        page = pageIndex
+    }
+    if (pageSize) {
+        size = pageSize
+    }
+    return axios.get(baseUrl + path + '?page=' + page + '&size=' + size);
 }
