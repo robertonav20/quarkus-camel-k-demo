@@ -14,10 +14,10 @@ import javax.websocket.server.ServerEndpoint;
 public class WebSocketServer {
 
     private static final Logger logger = Logger.getLogger(WebSocketServer.class);
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    Session frontedSession;
-    Session backendSession;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private Session frontedSession;
+    private Session backendSession;
 
     @OnOpen
     public void onOpen(Session session, @PathParam("component") String component) throws JsonProcessingException {

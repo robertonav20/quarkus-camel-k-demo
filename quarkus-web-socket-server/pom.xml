@@ -5,6 +5,7 @@
   <groupId>demo.com</groupId>
   <artifactId>quarkus-web-socket-server</artifactId>
   <version>1.0.0-SNAPSHOT</version>
+  <name>Quarkus Web Socket Server</name>
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
     <maven.compiler.release>11</maven.compiler.release>

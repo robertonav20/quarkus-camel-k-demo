@@ -18,3 +18,9 @@ export function getPods(namespace, label, value) {
 
     return axios.get(baseUrl + path);
 }
+
+export function getEvents() {
+    let path = ''
+
+    return axios.get(baseUrl + path);
+}

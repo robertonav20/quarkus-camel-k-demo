@@ -15,7 +15,9 @@ import javax.websocket.Session;
 public class ApplicationLifecycleListener {
 
     private static final Logger logger = Logger.getLogger(ApplicationLifecycleListener.class);
-    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Inject
+    private ObjectMapper objectMapper;
 
     @Inject
     private Session session;

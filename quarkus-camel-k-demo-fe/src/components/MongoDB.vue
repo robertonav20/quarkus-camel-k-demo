@@ -1,29 +1,25 @@
 <template>
-  <ui-grid class="grid">
-    <ui-grid-cell :columns="{default:12}" class="cell">
-      <ui-card>
+  <div class="mongo-container">
+    <div class="mongo-card">
+      <ui-card style="width: 100%;">
         <ui-card-content>
-          <ui-card-content style="padding: 15px">
-            <ui-card-text><ui-chip style="background-color: #326ce5; color: white">Mongo Events</ui-chip></ui-card-text>
+          <ui-card-content style="padding: 15px; background-color: #326ce5">
+            <ui-card-text style="color: white">Mongo Events</ui-card-text>
           </ui-card-content>
           <ui-list-divider></ui-list-divider>
           <ui-card-content style="padding: 15px">
             <ui-table
-                :data="data"
+                :data="events"
                 :tbody="tbody"
                 :thead="thead"
                 fullwidth
             >
-              <template #actions="{ data }">
-                <ui-icon @click="show(data)" style="color: #326ce5">description</ui-icon>
-                <ui-icon @click="show(data)" style="color: #be1131">delete</ui-icon>
-              </template>
               <ui-pagination
                   v-model="page"
                   :total="total"
                   show-total
-                  @change="onPage">
-              </ui-pagination>
+                  @change="onPage"
+              ></ui-pagination>
             </ui-table>
           </ui-card-content>
         </ui-card-content>
@@ -34,11 +30,13 @@
           </ui-card-icons>
         </ui-card-actions>
       </ui-card>
-    </ui-grid-cell>
-  </ui-grid>
+    </div>
+  </div>
 </template>
 
 <script>
+import {getEvents} from "@/service/mongo.service";
+
 export default {
   name: 'MongoDB',
   data() {
@@ -55,10 +53,6 @@ export default {
         {
           value: 'type',
           align: 'center'
-        },
-        {
-          value: 'actions',
-          align: 'center'
         }
       ],
       tbody: [
@@ -73,28 +67,44 @@ export default {
         {
           value: 'type',
           align: 'center'
-        },
-        {
-          value: 'actions',
-          align: 'center',
-          slot: 'actions'
         }
       ],
-      data: [{
-        id: '1',
-        creationDate: '2021',
-        type: 'TYPE'
-      }],
+      events: [],
       page: 1,
       total: 1
     }
   },
+  created() {
+    this.loadEvents()
+  },
   methods: {
-    show(data) {
-      console.log(data);
+    loadEvents() {
+      getEvents()
+        .then(response => {
+          this.events = response.data
+          this.total = response.data.length
+        })
+        .catch(error => console.log(error))
     },
-    onPage() {
-    }
+    onPage() {}
   }
 }
 </script>
+
+<style scoped>
+.mongo-container {
+  display: flex;
+  justify-content: center;
+  justify-self: center;
+  width: 100%;
+  padding: 2em;
+}
+
+.mongo-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+</style>
