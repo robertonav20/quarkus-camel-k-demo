@@ -1,0 +1,1 @@
+kubectl apply -f quarkus-web-socket-server-ingress.yaml

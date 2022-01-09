@@ -15,4 +15,7 @@ pushd ../registry
 pushd ../knative
 ./knative.sh
 
+pushd ../quarkus
+./quarkus.sh
+
 kubectl apply -f kubernetes-dashboard-ingress.yaml
