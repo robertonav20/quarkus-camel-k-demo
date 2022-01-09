@@ -9,7 +9,17 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: registry.local
+    - host: 'registry'
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: registry
+                port:
+                  number: 80
+    - host: 'registry.local'
       http:
         paths:
           - path: /

@@ -1,7 +1,7 @@
 kind: Ingress
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: quarkus-web-socket-server
+  name: web-socket-server
   namespace: default
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
