@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseUrl = 'http://localhost:8080/'
+const baseUrl = 'http://quarkus-camel-k-demo.default.local/'
 
 export function getPods(namespace, label, value) {
     let path = 'pods/'

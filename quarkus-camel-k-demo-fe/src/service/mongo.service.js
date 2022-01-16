@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseUrl = 'http://localhost:8080/events/'
+const baseUrl = 'http://quarkus-camel-k-demo.default.local/events/'
 
 export function getEvents(collection, pageIndex, pageSize) {
     let path = ''
