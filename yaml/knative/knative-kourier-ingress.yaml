@@ -8,6 +8,9 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: '0'
     nginx.ingress.kubernetes.io/enable-cors: 'true'
     nginx.ingress.kubernetes.io/cors-allow-origin: '*'
+    nginx.ingress.kubernetes.io/cors-allow-headers: '*'
+    nginx.ingress.kubernetes.io/cors-allow-methods: '*'
+    nginx.ingress.kubernetes.io/cors-expose-headers: '*'
 spec:
   ingressClassName: nginx
   rules:

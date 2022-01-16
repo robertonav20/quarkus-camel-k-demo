@@ -13,7 +13,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Path("/events")
@@ -34,21 +33,24 @@ public class MongoDBResource {
 
         if (collection.equalsIgnoreCase("event.main")) {
             PanacheQuery<MongoEventMain> mongoEvents = MongoEventMain.findAll();
-            mongoEvents.page(Page.of(start, end));
+            mongoEvents.range(start, end);
             events.addAll(mongoEvents.list());
             total = mongoEvents.count();
         } else if (collection.equalsIgnoreCase("event.secondary")) {
             PanacheQuery<MongoEventSecondary> mongoEvents = MongoEventSecondary.findAll();
-            mongoEvents.page(Page.of(start, end));
+            mongoEvents.range(start, end);
             events.addAll(mongoEvents.list());
             total = mongoEvents.count();
         } else if (collection.equalsIgnoreCase("event.others")) {
             PanacheQuery<MongoEventOther> mongoEvents = MongoEventOther.findAll();
-            mongoEvents.page(Page.of(start, end));
+            mongoEvents.range(start, end);
             events.addAll(mongoEvents.list());
             total = mongoEvents.count();
         }
 
-        return Response.ok(events).status(200).header("total", total).build();
+        return Response.ok(events).status(200)
+                .header("access-control-expose-headers", "*")
+                .header("total", total)
+                .build();
     }
 }

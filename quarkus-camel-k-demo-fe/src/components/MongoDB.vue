@@ -1,5 +1,10 @@
 <template>
   <div class="mongo-container">
+    <section>
+      <ui-select id="collection-select" v-model="collection" :options="collections">
+        Collections
+      </ui-select>
+    </section>
     <div class="mongo-card">
       <ui-card style="width: 100%;">
         <ui-card-content>
@@ -16,20 +21,14 @@
             >
               <ui-pagination
                   v-model="page"
-                  :total="total"
                   :page-size="pageSize"
+                  :total="total"
                   show-total
-                  @change="onPage"
               ></ui-pagination>
             </ui-table>
           </ui-card-content>
         </ui-card-content>
         <ui-divider></ui-divider>
-        <ui-card-actions>
-          <ui-card-icons>
-            <ui-icon-button icon="refresh" style="color: #326ce5"></ui-icon-button>
-          </ui-card-icons>
-        </ui-card-actions>
       </ui-card>
     </div>
   </div>
@@ -79,8 +78,22 @@ export default {
         }
       ],
       events: [],
-      collection: 'event.main',
-      page: 1,
+      collectionSelected: 'event.main',
+      collections: [
+        {
+          label: 'Main',
+          value: 'event.main'
+        },
+        {
+          label: 'Secondary',
+          value: 'event.secondary'
+        },
+        {
+          label: 'Others',
+          value: 'event.others'
+        }
+      ],
+      pageIndex: 1,
       pageSize: 5,
       total: 1
     }
@@ -88,16 +101,35 @@ export default {
   created() {
     this.loadEvents()
   },
+  computed: {
+    page: {
+      get() {
+        return this.pageIndex
+      },
+      set(val) {
+        this.pageIndex = val;
+        this.loadEvents();
+      }
+    },
+    collection: {
+      get() {
+        return this.collectionSelected
+      },
+      set(val) {
+        this.collectionSelected = val;
+        this.loadEvents();
+      }
+    }
+  },
   methods: {
     loadEvents() {
-      getEvents(this.collection, this.page - 1, this.pageSize)
-        .then(response => {
-          this.events = response.data
-          this.total = response.headers.total
-        })
-        .catch(error => console.log(error))
-    },
-    onPage() {}
+      getEvents(this.collection, this.pageIndex - 1, this.pageSize)
+          .then(response => {
+            this.events = response.data
+            this.total = Number(response.headers.total)
+          })
+          .catch(error => console.log(error))
+    }
   }
 }
 </script>
@@ -105,10 +137,19 @@ export default {
 <style scoped>
 .mongo-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   justify-self: center;
   width: 100%;
   padding: 2em;
+}
+
+.mongo-filter-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: auto;
+  width: 100%;
 }
 
 .mongo-card {
