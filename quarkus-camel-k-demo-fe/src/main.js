@@ -6,6 +6,7 @@ import BalmUI from 'balm-ui'; // Official Google Material Components
 import BalmUIPlus from 'balm-ui-plus'; // BalmJS Team Material Components
 import $toast from 'balm-ui/plugins/toast';
 import 'balm-ui-css';
+import '@/style/main.css';
 
 createApp(App)
     .use(router)

@@ -5,32 +5,29 @@
         Collections
       </ui-select>
     </section>
-    <div class="mongo-card">
-      <ui-card style="width: 100%;">
-        <ui-card-content>
-          <ui-card-content style="padding: 15px; background-color: #326ce5">
-            <ui-card-text style="color: white">Mongo Events</ui-card-text>
-          </ui-card-content>
-          <ui-list-divider></ui-list-divider>
-          <ui-card-content style="padding: 15px">
-            <ui-table
-                :data="events"
-                :tbody="tbody"
-                :thead="thead"
-                fullwidth
-            >
-              <ui-pagination
-                  v-model="page"
-                  :page-size="pageSize"
-                  :total="total"
-                  show-total
-              ></ui-pagination>
-            </ui-table>
-          </ui-card-content>
+    <ui-card class="mongo-card">
+      <ui-card-content style="height: 100%">
+        <ui-card-content style="padding: 15px; background-color: #326ce5">
+          <ui-card-text style="color: white">Mongo Events</ui-card-text>
         </ui-card-content>
-        <ui-divider></ui-divider>
-      </ui-card>
-    </div>
+        <ui-list-divider></ui-list-divider>
+        <ui-card-content style="padding: 15px">
+          <ui-table
+              :data="events"
+              :tbody="tbody"
+              :thead="thead"
+              fullwidth
+          >
+            <ui-pagination
+                v-model="page"
+                :page-size="pageSize"
+                :total="total"
+                show-total
+            ></ui-pagination>
+          </ui-table>
+        </ui-card-content>
+      </ui-card-content>
+    </ui-card>
   </div>
 </template>
 
@@ -138,25 +135,17 @@ export default {
 .mongo-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   justify-self: center;
+  gap: 10px;
   width: 100%;
   padding: 2em;
-}
-
-.mongo-filter-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: auto;
-  width: 100%;
 }
 
 .mongo-card {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 100%;
+  height: auto;
   width: 100%;
 }
 </style>

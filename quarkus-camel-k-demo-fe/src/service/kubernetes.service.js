@@ -1,26 +1,24 @@
 import axios from 'axios'
 
-const baseUrl = 'http://quarkus-camel-k-demo.default.local/pods/'
+const baseUrl = 'http://localhost:8080/'
 
 export function getPods(namespace, label, value) {
-    let path = ''
+    let path = 'pods/'
     if (namespace) {
-        path = namespace
+        path += namespace
     } else {
-        path = 'default'
+        path += 'default'
     }
     if (label) {
-        path = '/' + label
+        path += '/' + label
     }
     if (value) {
-        path = '/' + value
+        path += '/' + value
     }
 
     return axios.get(baseUrl + path);
 }
 
-export function getEvents() {
-    let path = ''
-
-    return axios.get(baseUrl + path);
+export function getNamespaces() {
+    return axios.get(baseUrl + 'namespaces');
 }

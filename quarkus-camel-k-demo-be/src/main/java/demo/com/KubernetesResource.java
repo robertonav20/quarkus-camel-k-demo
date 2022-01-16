@@ -1,6 +1,7 @@
 package demo.com;
 
 import io.fabric8.kubernetes.api.model.LabelSelector;
+import io.fabric8.kubernetes.api.model.Namespace;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
 
@@ -10,7 +11,7 @@ import javax.ws.rs.PathParam;
 import java.util.HashMap;
 import java.util.List;
 
-@Path("/pods")
+@Path("/")
 public class KubernetesResource {
 
     private final KubernetesClient kubernetesClient;
@@ -20,7 +21,13 @@ public class KubernetesResource {
     }
 
     @GET
-    @Path("/{namespace}/")
+    @Path("/namespaces")
+    public List<Namespace> getNamespaces() {
+        return kubernetesClient.namespaces().list().getItems();
+    }
+
+    @GET
+    @Path("/pods/{namespace}/")
     public List<Pod> podsByNamespace(
         @PathParam("namespace") String namespace
     ) {
@@ -28,7 +35,7 @@ public class KubernetesResource {
     }
 
     @GET
-    @Path("/{namespace}/{label}")
+    @Path("/pods/{namespace}/{label}")
     public List<Pod> podsByLabel(
         @PathParam("namespace") String namespace,
         @PathParam("label") String label
@@ -37,7 +44,7 @@ public class KubernetesResource {
     }
 
     @GET
-    @Path("/{namespace}/{label}/{value}")
+    @Path("/pods/{namespace}/{label}/{value}")
     public List<Pod> podsByLabelValue(
         @PathParam("namespace") String namespace,
         @PathParam("label") String label,

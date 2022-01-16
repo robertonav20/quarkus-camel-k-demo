@@ -1,52 +1,42 @@
 <template>
   <div class="kubernetes-container">
-    <div class="kubernetes-card">
-      <ui-card style="width: 100%;">
-        <ui-card-content>
-          <ui-card-content style="padding: 15px; background-color: #326ce5">
-            <ui-card-text style="color: white">Kubernetes Pods</ui-card-text>
-          </ui-card-content>
-          <ui-list-divider></ui-list-divider>
-          <ui-card-content style="padding: 15px">
-            <ui-table
-                :data="pods"
-                :tbody="tbody"
-                :thead="thead"
-                fullwidth
-            >
-              <template #actions="{ data }">
-                <ui-icon style="color: #326ce5" @click="show(data)">description</ui-icon>
-              </template>
-              <ui-pagination
-                  v-model="page"
-                  :total="total"
-                  :page-size="pageSize"
-                  show-total
-                  @change="onPage"
-              ></ui-pagination>
-            </ui-table>
-          </ui-card-content>
+    <section>
+      <ui-select id="collection-select" v-model="namespace" :options="namespaces">
+        Namespaces
+      </ui-select>
+    </section>
+    <ui-card class="kubernetes-card">
+      <ui-card-content style="height: 100%">
+        <ui-card-content style="padding: 15px; background-color: #326ce5">
+          <ui-card-text style="color: white">Kubernetes Pods</ui-card-text>
         </ui-card-content>
-        <ui-divider></ui-divider>
-        <ui-card-actions>
-          <ui-card-icons>
-            <ui-icon-button icon="refresh" style="color: #326ce5"></ui-icon-button>
-          </ui-card-icons>
-        </ui-card-actions>
-      </ui-card>
-    </div>
+        <ui-list-divider></ui-list-divider>
+        <ui-card-content style="padding: 15px; overflow: auto;">
+          <ui-table
+              :data="pods"
+              :tbody="tbody"
+              :thead="thead"
+              fullwidth
+          >
+            <template #actions="{ data }">
+              <ui-icon style="color: #326ce5" @click="show(data)">description</ui-icon>
+            </template>
+          </ui-table>
+        </ui-card-content>
+      </ui-card-content>
+    </ui-card>
   </div>
   <ui-dialog v-model="open">
-    <ui-dialog-title>{{pod.metadata?.name}}</ui-dialog-title>
+    <ui-dialog-title>{{ pod.metadata?.name }}</ui-dialog-title>
     <ui-dialog-content>
-      {{pod}}
+      {{ pod }}
     </ui-dialog-content>
     <ui-dialog-actions></ui-dialog-actions>
   </ui-dialog>
 </template>
 
 <script>
-import {getPods} from "@/service/kubernetes.service";
+import {getNamespaces, getPods} from "@/service/kubernetes.service";
 
 export default {
   name: 'Kubernetes',
@@ -99,19 +89,26 @@ export default {
       ],
       pod: {},
       pods: [],
+      namespaceSelected: 'default',
+      namespaces: [],
       open: false,
-      page: 1,
-      pageSize: 5,
-      total: 1
+      total: 0
+    }
+  },
+  computed: {
+    namespace: {
+      get() {
+        return this.namespaceSelected
+      },
+      set(val) {
+        this.namespaceSelected = val;
+        this.loadPods();
+      }
     }
   },
   created() {
-    getPods()
-        .then(response => {
-          this.pods = response.data
-          this.total = response.data.length
-        })
-        .catch(error => console.log(error))
+    this.loadPods();
+    this.loadNamespaces();
   },
   methods: {
     show(data) {
@@ -119,7 +116,25 @@ export default {
       this.pod = data;
       this.open = true;
     },
-    onPage() {
+    loadPods() {
+      getPods(this.namespaceSelected)
+          .then(response => {
+            this.pods = response.data
+            this.total = response.data.length
+          })
+          .catch(error => console.log(error))
+    },
+    loadNamespaces() {
+      getNamespaces()
+          .then(response => {
+            this.namespaces = response.data.map(n => {
+              return {
+                label: n.metadata.name,
+                value: n.metadata.name
+              }
+            })
+          })
+          .catch(error => console.log(error))
     }
   }
 }
@@ -128,16 +143,20 @@ export default {
 <style scoped>
 .kubernetes-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   justify-self: center;
+  gap: 10px;
   width: 100%;
   padding: 2em;
 }
+
 .kubernetes-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 100%;
   width: 100%;
+  height: auto;
+  max-height: 700px;
 }
 </style>
