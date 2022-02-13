@@ -38,6 +38,7 @@ public class WebSocketServer {
 
     @OnClose
     public void onClose(Session session, @PathParam("component") String component) throws JsonProcessingException {
+        logger.info("Received a close message from component " + component + " left!");
         if (component.equalsIgnoreCase("frontend")) {
             frontedSession = null;
             session = backendSession;
@@ -55,6 +56,7 @@ public class WebSocketServer {
 
     @OnError
     public void onError(Session session, @PathParam("component") String component, Throwable throwable) throws JsonProcessingException {
+        logger.info("Received an error message from component " + component + " left!");
         if (component.equalsIgnoreCase("frontend")) {
             frontedSession = null;
             session = backendSession;
