@@ -39,7 +39,9 @@ export default {
   data() {
     return {
       routes: this.$router.getRoutes(),
-      status: false
+      status: false,
+      webSocketConnection: null,
+      timerId: null
     }
   },
   computed: {
@@ -74,6 +76,15 @@ export default {
     this.webSocketConnection.onopen = function (event) {
       console.log(event)
       console.log("Successfully connected to the echo websocket server...")
+      component.stayAlive()
+    }
+  },
+  methods: {
+    stayAlive() {
+      if (this.webSocketConnection.readyState == WebSocket.OPEN) {
+        this.webSocketConnection.send('Stay alive');
+      }
+      this.timerId = setTimeout(this.stayAlive, 30000);
     }
   }
 }
