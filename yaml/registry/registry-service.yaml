@@ -1,0 +1,18 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: registry
+  namespace: kube-system
+  labels:
+    k8s-app: kube-registry
+spec:
+  ports:
+    - name: registry
+      protocol: TCP
+      port: 5000
+    - name: registry-internal
+      protocol: TCP
+      port: 80
+      targetPort: 5000
+  selector:
+    k8s-app: kube-registry
