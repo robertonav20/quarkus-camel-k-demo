@@ -97,3 +97,7 @@ echo "server=/local/$(minikube ip)" > /etc/NetworkManager/dnsmasq.d/minikube.con
 Restart Network Manager
 
 sudo systemctl restart NetworkManager.service
+
+
+
+https://github.com/weimeilin79/camel-k-example-jaeger
