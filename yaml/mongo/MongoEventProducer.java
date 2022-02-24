@@ -23,10 +23,9 @@
 import com.mongodb.DBObject;
 import org.apache.camel.builder.RouteBuilder;
 
-public class MongoProducer extends RouteBuilder {
+public class MongoEventProducer extends RouteBuilder {
 	@Override
 	public void configure() throws Exception {
-
 		from("timer:clock?period=5000")
 			.setBody()
 			.simple("{ \"name\": \"NEW EVENT\"}")

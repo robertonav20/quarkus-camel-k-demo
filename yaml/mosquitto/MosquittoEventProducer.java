@@ -13,26 +13,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * Read the documentation at https://camel.apache.org/components/next/paho-mqtt5-component.html#_samples
- * 
+ *
  * kamel run --dev MosquittoEventProducer.java -d mvn:com.google.code.gson:gson:2.8.9
  */
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Expression;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import java.lang.Integer;
+import org.apache.camel.builder.RouteBuilder;
+
 import java.util.Date;
-import java.util.Random;
 import java.util.UUID;
 
 public class MosquittoEventProducer extends RouteBuilder {
-	
-	private Gson gson = new Gson();
+
+	private final Gson gson = new Gson();
 
 	@Override
 	public void configure() throws Exception {
@@ -41,7 +37,11 @@ public class MosquittoEventProducer extends RouteBuilder {
 			.log("Generated event type ${header.eventType}")
 			.choice()
 				.when(simple("${header.eventType} < 3"))
-					.setBody().message(message -> generateEvent((String) message.getHeader("eventType")))
+					.setBody().message(message -> {
+						String spanId = "GET GENERATED SPAN ID";
+						generateEvent((String) message.getHeader("eventType"));
+						return message;
+					})
 					.log("Send to event.topic.main ${body}")
 					.to("paho-mqtt5:event.topic.main?brokerUrl=tcp://mosquitto:1883")
 				.when(simple("${header.eventType} >= 3 && ${header.eventType} < 7"))
@@ -54,19 +54,18 @@ public class MosquittoEventProducer extends RouteBuilder {
 					.to("paho-mqtt5:event.topic.others?brokerUrl=tcp://mosquitto:1883");
 	}
 
-    private String generateType() {
+	private String generateType() {
 		int random = (int) (Math.random() * 10);
-		String type = String.valueOf(random);
-		return type;
+		return String.valueOf(random);
 	}
 
 	private String generateEvent(String type) {
 		JsonObject event = new JsonObject();
 		event.addProperty("id", UUID.randomUUID().toString());
 		event.addProperty("date", new Date().toString());
-		event.addProperty("name", "EVENT_" + ((int)(Math.random() * 10000)));
+		event.addProperty("name", "EVENT_" + ((int) (Math.random() * 10000)));
 		event.addProperty("type", type);
-		
+
 		return gson.toJson(event);
-    }
+	}
 }
