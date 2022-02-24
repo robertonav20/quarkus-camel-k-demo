@@ -22,19 +22,11 @@
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import io.opentracing.Tracer;
-import org.apache.camel.PropertyInject;
-import org.apache.camel.builder.RouteBuilder;
-
 import org.apache.camel.CamelContext;
-import io.jaegertracing.Configuration;
-import io.jaegertracing.Configuration.ReporterConfiguration;
-import io.jaegertracing.Configuration.SamplerConfiguration;
-import io.jaegertracing.Configuration.SenderConfiguration;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.opentracing.OpenTracingTracer;
-import org.apache.camel.spi.Registry;
 
 import java.util.Date;
-import java.util.Set;
 import java.util.UUID;
 
 public class MosquittoEventProducer extends RouteBuilder {
@@ -48,18 +40,18 @@ public class MosquittoEventProducer extends RouteBuilder {
 			.setHeader("eventType").message(message -> generateType())
 			.log("Generated event type ${header.eventType}")
 			.choice()
-				.when(simple("${header.eventType} < 3"))
-					.setBody().message(message -> generateEvent((String) message.getHeader("eventType")))
-					.log("Send to event.topic.main ${body}")
-					.to("paho-mqtt5:event.topic.main?brokerUrl=tcp://mosquitto:1883")
-				.when(simple("${header.eventType} >= 3 && ${header.eventType} < 7"))
-					.setBody().message(message -> generateEvent((String) message.getHeader("eventType")))
-					.log("Send to event.topic.secondary ${body}")
-					.to("paho-mqtt5:event.topic.secondary?brokerUrl=tcp://mosquitto:1883")
-				.otherwise()
-					.setBody().message(message -> generateEvent((String) message.getHeader("eventType")))
-					.log("Send to event.topic.others ${body}")
-					.to("paho-mqtt5:event.topic.others?brokerUrl=tcp://mosquitto:1883");
+			.when(simple("${header.eventType} < 3"))
+			.setBody().message(message -> generateEvent((String) message.getHeader("eventType")))
+			.log("Send to event.topic.main ${body}")
+			.to("paho-mqtt5:event.topic.main?brokerUrl=tcp://mosquitto:1883")
+			.when(simple("${header.eventType} >= 3 && ${header.eventType} < 7"))
+			.setBody().message(message -> generateEvent((String) message.getHeader("eventType")))
+			.log("Send to event.topic.secondary ${body}")
+			.to("paho-mqtt5:event.topic.secondary?brokerUrl=tcp://mosquitto:1883")
+			.otherwise()
+			.setBody().message(message -> generateEvent((String) message.getHeader("eventType")))
+			.log("Send to event.topic.others ${body}")
+			.to("paho-mqtt5:event.topic.others?brokerUrl=tcp://mosquitto:1883");
 	}
 
 	private String generateType() {
