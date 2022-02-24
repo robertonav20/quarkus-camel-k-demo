@@ -21,14 +21,26 @@
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import io.opentracing.Tracer;
+import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.RouteBuilder;
 
+import org.apache.camel.CamelContext;
+import io.jaegertracing.Configuration;
+import io.jaegertracing.Configuration.ReporterConfiguration;
+import io.jaegertracing.Configuration.SamplerConfiguration;
+import io.jaegertracing.Configuration.SenderConfiguration;
+import org.apache.camel.opentracing.OpenTracingTracer;
+import org.apache.camel.spi.Registry;
+
 import java.util.Date;
+import java.util.Set;
 import java.util.UUID;
 
 public class MosquittoEventProducer extends RouteBuilder {
 
 	private final Gson gson = new Gson();
+	private Tracer tracer;
 
 	@Override
 	public void configure() throws Exception {
@@ -37,11 +49,7 @@ public class MosquittoEventProducer extends RouteBuilder {
 			.log("Generated event type ${header.eventType}")
 			.choice()
 				.when(simple("${header.eventType} < 3"))
-					.setBody().message(message -> {
-						String spanId = "GET GENERATED SPAN ID";
-						generateEvent((String) message.getHeader("eventType"));
-						return message;
-					})
+					.setBody().message(message -> generateEvent((String) message.getHeader("eventType")))
 					.log("Send to event.topic.main ${body}")
 					.to("paho-mqtt5:event.topic.main?brokerUrl=tcp://mosquitto:1883")
 				.when(simple("${header.eventType} >= 3 && ${header.eventType} < 7"))
@@ -60,6 +68,10 @@ public class MosquittoEventProducer extends RouteBuilder {
 	}
 
 	private String generateEvent(String type) {
+		CamelContext context = getCamelContext();
+		OpenTracingTracer openTracingTracer = context.getRegistry(OpenTracingTracer.class);
+		tracer = openTracingTracer.getTracer();
+
 		JsonObject event = new JsonObject();
 		event.addProperty("id", UUID.randomUUID().toString());
 		event.addProperty("date", new Date().toString());
