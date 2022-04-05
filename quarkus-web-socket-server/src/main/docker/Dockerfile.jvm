@@ -21,7 +21,7 @@
 # docker run -i --rm -p 8080:8080 quarkus/quarkus-web-socket-server-jvm
 #
 ###
-FROM registry.access.redhat.com/ubi8/openjdk-11-runtime:1.10
+FROM registry.access.redhat.com/ubi8/ubi-minimal:sha256:a32d019e623b253af5146928d32d1678c9e320f8e1104f8ad4aed08137ef266b
 
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en'
 
