@@ -1,5 +1,3 @@
-kubectl apply -f kubernetes-dashboard-ingress.yamlkube
-
 pushd mosquitto
 ./mosquitto.sh
 
