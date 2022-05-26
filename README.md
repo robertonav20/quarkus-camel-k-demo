@@ -68,7 +68,7 @@ tar -xf camel-k-client-1.7.0-linux-64bit.tar.gz
 
 4. Install kamel
 
-   `kamel install --registry 10.109.218.165 --monitoring=true --force`
+   `kamel install --monitoring=true --force --build-publish-strategy=Buildah --registry ghcr.io/USERNAME --registry-auth-username robertonav20 --registry-auth-password PASSWORD`
 
 # Apache Camel-K Documentations
 - Install guide : https://camel.apache.org/camel-k/next/installation/installation.html.
