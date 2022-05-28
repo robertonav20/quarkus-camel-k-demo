@@ -18,40 +18,30 @@ public class Generator extends RouteBuilder {
 	private final Gson gson = new Gson();
 	private final Random random = new Random();
 	private static final String EVENT_TYPE_KEY = "eventType";
-	private static final String LOG_ROUTE = "seda:a";
+	private static final String LOG_ROUTE = "http://localhost:{{route.http.port}}/test";
 
 	@ConfigProperty(name = "route.id")
 	String name;
 
 	@Override
 	public void configure() {
-		from(LOG_ROUTE)
-			.log("${body}");
-
 		from("timer:clock?period={{timer.period}}")
 			.routeId(name)
 			.setHeader(EVENT_TYPE_KEY).message(message -> generateType())
 			.log("Generated event type ${header.eventType}")
 			.choice()
-			.when(simple("${header.eventType} < 3"))
-			.process(getOpenTracingProcessor())
-			.setBody().message(message -> generateEvent((String) message.getHeader(EVENT_TYPE_KEY)))
-			.log("Send to event.topic.main ${body}")
-			.to(LOG_ROUTE)
-			//.to("paho-mqtt5:event.topic.main?brokerUrl=tcp://mosquitto:1883")
-			.when(simple("${header.eventType} >= 3 && ${header.eventType} < 7"))
-			.process(getOpenTracingProcessor())
-			.setBody().message(message -> generateEvent((String) message.getHeader(EVENT_TYPE_KEY)))
-			.log("Send to event.topic.secondary ${body}")
-			.to(LOG_ROUTE)
-			//.to("paho-mqtt5:event.topic.secondary?brokerUrl=tcp://mosquitto:1883")
-			.otherwise()
-			.process(getOpenTracingProcessor())
-			.setBody().message(message -> generateEvent((String) message.getHeader(EVENT_TYPE_KEY)))
-			.log("Send to event.topic.others ${body}")
-			.to(LOG_ROUTE);
-			//.to("paho-mqtt5:event.topic.others?brokerUrl=tcp://mosquitto:1883");
-
+				.when(simple("${header.eventType} < 3"))
+					.setBody().message(message -> generateEvent((String) message.getHeader(EVENT_TYPE_KEY)))
+					.log("Send to event.topic.main ${body}")
+					.to(LOG_ROUTE)
+				.when(simple("${header.eventType} >= 3 && ${header.eventType} < 7"))
+					.setBody().message(message -> generateEvent((String) message.getHeader(EVENT_TYPE_KEY)))
+					.log("Send to event.topic.secondary ${body}")
+					.to(LOG_ROUTE)
+				.otherwise()
+					.setBody().message(message -> generateEvent((String) message.getHeader(EVENT_TYPE_KEY)))
+					.log("Send to event.topic.others ${body}")
+					.to(LOG_ROUTE);
 	}
 
 	private String generateType() {
@@ -66,15 +56,5 @@ public class Generator extends RouteBuilder {
 		event.addProperty("type", type);
 
 		return gson.toJson(event);
-	}
-
-	private Processor getOpenTracingProcessor() {
-		return exchange -> {
-			SpanAdapter spanAdapter = ActiveSpanManager.getSpan(exchange);
-			String traceId = spanAdapter.traceId();
-			log.info("traceId {}", traceId);
-			exchange.setProperty("traceId", traceId);
-			exchange.getMessage().setHeader("traceId", traceId);
-		};
 	}
 }
