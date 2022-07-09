@@ -57,7 +57,7 @@ export default {
   mounted: function () {
     const component = this
     console.log("Starting connection to WebSocket Server")
-    this.webSocketConnection = new WebSocket('ws://quarkus-web-socket-server.local/sessions/frontend')
+    this.webSocketConnection = new WebSocket('ws://quarkus-web-socket-server.raspberry.home/sessions/frontend')
 
     this.webSocketConnection.onmessage = function (event) {
       console.log('Received message!')

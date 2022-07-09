@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseUrl = 'http://quarkus-camel-k-demo.default.local/'
+const baseUrl = 'http://quarkus-camel-k-demo.default.knative.raspberry.home/'
 
 export function getPods(namespace, label, value) {
     let path = 'pods/'

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseUrl = 'http://quarkus-camel-k-demo.default.local/events/'
+const baseUrl = 'http://quarkus-camel-k-demo.default.knative.raspberry.home/events/'
 
 export function getEvents(collection, pageIndex, pageSize) {
     let path = ''
